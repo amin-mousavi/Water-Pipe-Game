@@ -1,8 +1,10 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <ctime>
 #include <stdlib.h>
 #include <array>
+#include <sstream>
 
 #include "DirectPipe.h"
 #include "HorizonalDirectPipe.h"
@@ -22,7 +24,7 @@ using namespace std;
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(445, 445), "Water Pipe Game", sf::Style::Default);
+	sf::RenderWindow window(sf::VideoMode(445, 448), "Water Pipe Game", sf::Style::Default);
 
 	srand(static_cast<unsigned int>(time(0)));
 
@@ -39,7 +41,7 @@ int main()
 	t4.setSmooth(true);
 	*/
 
-	begin.loadFromFile("image/begin.png");
+	begin.loadFromFile("image/begin.png"); 
 	end.loadFromFile("image/end.png");
 
 	sf::Sprite sBackground(t1), sDirectPipe(t2), sLPipe(t3), sPlusPipe(t4);
@@ -49,7 +51,7 @@ int main()
 	sLPipe.setOrigin(27, 27);
 	sPlusPipe.setOrigin(27, 27);
 	*/
-	sBegin.setPosition(35, 82);
+	sBegin.setPosition(35, 82);    
 	sEnd.setPosition(363, 298);
 
 	array <array<Pipe*, length>, length> puzzle;
@@ -71,34 +73,98 @@ int main()
 			{
 				puzzle[i][j] = &directPipe;
 			}
-			if (1 == randomNumber)
+			else if (1 == randomNumber)
 			{
 				puzzle[i][j] = &horizonalDirectPipe;
 			}
-			if (2 == randomNumber)
+			else if(2 == randomNumber)
 			{
 				puzzle[i][j] = &lPipe;
 			}
-			if (3 == randomNumber)
+			else if(3 == randomNumber)
 			{
 				puzzle[i][j] = &lPipe2;
 			}
-			if (4 == randomNumber)
+			else if(4 == randomNumber)
 			{
 				puzzle[i][j] = &lPipe3;
 			}
-			if (5 == randomNumber)
+			else if(5 == randomNumber)
 			{
 				puzzle[i][j] = &lPipe4;
 			}
-			if (6 == randomNumber)
+			else
 			{
 				puzzle[i][j] = &plusPipe;
 			}
 		}
 	}
+
+	bool paused = true;
+//////////////////////////////////////////////////////////////////////////////////////	
+	int score = 0;
+
+	sf::Text messageText, scoreText;
+	sf::Font font;
+	if (!font.loadFromFile("font/VtksDracena.ttf"))
+		cout << "ERROR,Font not open" << endl;
+
+	font.loadFromFile("font/VtksDracena.ttf");
+	
+	messageText.setFont(font);
+	scoreText.setFont(font);
+
+	messageText.setString("Press Enter to start");
+	scoreText.setString("Score ");
+
+	messageText.setCharacterSize(50);
+	scoreText.setCharacterSize(30);
+
+	messageText.setFillColor(sf::Color::Blue);
+	scoreText.setFillColor(sf::Color::Blue);
+
+	//Position the text
+	sf::FloatRect textRect = messageText.getLocalBounds();
+	messageText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+	messageText.setPosition(445 / 2.0f, 448 / 2.0f);
+	//scoreText.setPosition(0, 0);
+/////////////////////////////////////////////////////////////////////////////////////////
+	//variable to control time itself
+	sf::Clock clock;
+
+	//Time bar
+	sf::RectangleShape timeBar(sf::Vector2f(400, 80));
+	//sf::RectangleShape rectangle(sf::Vector2f(400, 80));
+	//rectangle.setPosition((445 / 2.0f) - 400 / 2.0f, 448);
+	float timeBarStartWidth = 445;
+	float timeBarHeight = 3;
+	timeBar.setSize(sf::Vector2f(timeBarStartWidth, timeBarHeight));
+	timeBar.setFillColor(sf::Color::Blue);
+	//timeBar.setPosition((445 / 2.0f) - timeBarStartWidth / 2.0f, 448);
+	timeBar.setPosition(0,0);
+
+	sf::Time gameTimeTotal;
+	float timeRemaining = 6.0f;
+	float timeBarWidthPerSecond = timeBarStartWidth / timeRemaining;  
+	
+////////////////////////////////////////////////////////////////////////////////////////////
+	//add sound effect
+	sf::Music gameMusic;
+	gameMusic.openFromFile("sound/game.wav");
+	gameMusic.setVolume(50);
+	gameMusic.play();
+	gameMusic.setLoop(true);
+
+	sf::Music gameOverMusic;
+	gameOverMusic.openFromFile("sound/gameOver.wav");
+	gameOverMusic.setVolume(50);
+	
+///////////////////////////////////////////////////////////////////////////////////////////
+
 	while (window.isOpen())
 	{
+
+
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -106,6 +172,7 @@ int main()
 			{
 				window.close();
 			}
+
 			if (event.type == sf::Event::MouseButtonPressed)
 				if (event.key.code == sf::Mouse::Left)
 				{
@@ -124,47 +191,100 @@ int main()
 
 					drop(servPos);
 					*/
-				}
+			}
 		}
-
-		window.clear();
-		window.draw(sBackground);
-		window.draw(sBegin);
-		window.draw(sEnd);
-
-		for (int i = 0; i < length; i++)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Return))
 		{
-			for (int j = 0; j < length; j++)
+			paused = false;
+			//Reset the time and the time score
+			score = 0;
+			//timeRemaining = 5;
+		}
+		
+		if (!paused)
+		{
+			
+			if (timeRemaining <= 3.0f)
 			{
-				puzzle[i][j]->draw(window, i, j, tileSize);
+				timeBar.setFillColor(sf::Color::Red);
+			}
+			sf::Time dt = clock.restart();  //Measure time
+			//Subtractfrom the amount of time remaining
+			timeRemaining -= dt.asSeconds() * 0.03f;
+			//size up the time bar
+			timeBar.setSize(sf::Vector2f(timeBarWidthPerSecond* timeRemaining, timeBarHeight));
+			
+			if (timeRemaining <= 0.0f)
+			{
+				//pause the game
+				paused = true;
 
-				/*pipe& p = grid[j][i];
+				//change the message shown to the player
+				messageText.setString("Out of time");
+				
+				//Reposition the text based on its new size
 
-				int kind = p.dirs.size();
-				if (kind == 2 && p.dirs[0] == -p.dirs[1]) kind = 0;
+				sf::FloatRect textRect = messageText.getLocalBounds();
+				messageText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+				messageText.setPosition(445 / 2.0f, 448 / 2.0f);
+				gameMusic.pause();
+				gameOverMusic.play();
+			}
+			
 
-				p.angle += 5;
-				if (p.angle > p.orientation * 90) p.angle = p.orientation * 90;
 
-				sPipe.setTextureRect(IntRect(ts * kind, 0, ts, ts));
-				sPipe.setRotation(p.angle);
-				sPipe.setPosition(j * ts, i * ts); sPipe.move(offset);
-				app.draw(sPipe);
-
-				if (kind == 1)
+			window.clear();
+			window.draw(sBackground);
+			window.draw(scoreText);
+			window.draw(sBegin);
+			window.draw(sEnd);
+			window.draw(timeBar);
+			
+			for (int i = 0; i < length; i++)
+			{
+				for (int j = 0; j < length; j++)
 				{
-					if (p.on) sComp.setTextureRect(IntRect(53, 0, 36, 36));
-					else sComp.setTextureRect(IntRect(0, 0, 36, 36));
-					sComp.setPosition(j * ts, i * ts); sComp.move(offset);
-					app.draw(sComp);
-				}*/
+					puzzle[i][j]->draw(window, i, j, tileSize);
 
+					/*pipe& p = grid[j][i];
+
+					int kind = p.dirs.size();
+					if (kind == 2 && p.dirs[0] == -p.dirs[1]) kind = 0;
+
+					p.angle += 5;
+					if (p.angle > p.orientation * 90) p.angle = p.orientation * 90;
+
+					sPipe.setTextureRect(IntRect(ts * kind, 0, ts, ts));
+					sPipe.setRotation(p.angle);
+					sPipe.setPosition(j * ts, i * ts); sPipe.move(offset);
+					app.draw(sPipe);
+
+					if (kind == 1)
+					{
+						if (p.on) sComp.setTextureRect(IntRect(53, 0, 36, 36));
+						else sComp.setTextureRect(IntRect(0, 0, 36, 36));
+						sComp.setPosition(j * ts, i * ts); sComp.move(offset);
+						app.draw(sComp);
+					}*/
+
+					
+
+				}
 
 			}
 
+			stringstream ss;
+			ss << "Score " << score;
+			scoreText.setString(ss.str());
+			
+		}// End of if(!paused)
+		if (paused)
+		{
+			window.draw(sBackground);
+			window.draw(messageText);
 		}
-
 		window.display();
+		
 
 	}
 	return 0;
