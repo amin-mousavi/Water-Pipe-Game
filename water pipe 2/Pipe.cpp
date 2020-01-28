@@ -73,6 +73,12 @@ void Pipe::draw(sf::RenderWindow & pictureWindow, int, int, int)
 {
 
 }
+/*
+void Draw(sf::RenderWindow& pictureWindow , Pipe* , int, int, int)
+{
+
+}
+*/
 Pipe::~Pipe()
 {
 }

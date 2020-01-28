@@ -15,6 +15,7 @@ void LPipe::draw(sf::RenderWindow& pictureWindow, int row, int col, int title_si
 	sf::Vector2f offset(120, 110);
 
 	pictureTexture.loadFromFile("image/3.png");
+	pictureTexture.setSmooth(true);
 	pictureSprite.setTexture(pictureTexture);
 	pictureSprite.setOrigin(27, 27);
 

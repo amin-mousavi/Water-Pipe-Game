@@ -17,6 +17,7 @@ void PlusPipe::draw(sf::RenderWindow& pictureWindow, int row, int col, int title
 	sf::Vector2f offset(120, 110);
 
 	pictureTexture.loadFromFile("image/4.png");
+	pictureTexture.setSmooth(true);
 	pictureSprite.setTexture(pictureTexture);
 	pictureSprite.setOrigin(27, 27);
 
