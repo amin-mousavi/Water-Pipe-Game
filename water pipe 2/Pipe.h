@@ -29,6 +29,9 @@ public:
 
 	virtual void draw(sf::RenderWindow& pictureWindow, int, int, int) = 0;
 
+	//virtual void Draw(sf::RenderWindow& pictureWindow, Pipe*, int, int, int) = 0;
+	bool startPipe[4] = { 0,0,0,0 };
+	bool endPipe[4] = { 0,0,0,0 };
 
 protected:
 	int orientation;
@@ -37,6 +40,7 @@ protected:
 	sf::Texture pictureTexture;
 	sf::Sprite pictureSprite;
 	std::vector <sf::Vector2i> dirs;
+	
 
 };
 

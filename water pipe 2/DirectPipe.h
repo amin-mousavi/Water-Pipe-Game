@@ -12,6 +12,7 @@ public:
 
 	void draw(sf::RenderWindow& pictureWindow, int row, int col, int title_size);
 
+	//void Draw(sf::RenderWindow& pictureWindow, Pipe*, int, int, int);
 };
 
 #endif
