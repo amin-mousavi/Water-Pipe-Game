@@ -7,7 +7,6 @@
 #include <sstream>
 #include <typeinfo>
 #include <string>
-/////////////////////////////////////////////
 
 #include "DirectPipe.h"
 #include "HorizonalDirectPipe.h"
@@ -19,10 +18,14 @@
 
 using namespace std;
 
+void pathMaker();
+
 const int length = 5;
 int tileSize = 54;
-sf::Vector2f offset(120, 110);
+//sf::Vector2f offset(120, 110);
 array <array<Pipe*, length>, length> puzzle;
+
+void pathMaker();
 
 int main()
 {
@@ -53,17 +56,10 @@ int main()
 	//sf::Sprite sDirectPipe(t2), sLPipe(t3), sPlusPipe(t4);
 	sf::Sprite sBegin(begin), sEnd(end);
 	
-	/*
-	sDirectPipe.setOrigin(27, 27);
-	sLPipe.setOrigin(27, 27);
-	sPlusPipe.setOrigin(27, 27);
-	*/
-	
 	sBegin.setPosition(35, 82);    
 	sEnd.setPosition(363, 298);
 
 	/*
-	array <array<Pipe*, length>, length> puzzle;
 	DirectPipe directPipe;
 	HorizonalDirectPipe horizonalDirectPipe;
 	LPipe lPipe;
@@ -140,7 +136,9 @@ int main()
 			}
 		}
 	}
-
+//////////////////////////////////////////////////////////////////////////////////////////
+	pathMaker();
+//////////////////////////////////////////////////////////////////////////////////////////
 	bool paused = true;
 //////////////////////////////////////////////////////////////////////////////////////	
 	int score = 0;
@@ -175,8 +173,6 @@ int main()
 
 	//Time bar
 	sf::RectangleShape timeBar(sf::Vector2f(400, 80));
-	//sf::RectangleShape rectangle(sf::Vector2f(400, 80));
-	//rectangle.setPosition((445 / 2.0f) - 400 / 2.0f, 448);
 	float timeBarStartWidth = 445;
 	float timeBarHeight = 3;
 	timeBar.setSize(sf::Vector2f(timeBarStartWidth, timeBarHeight));
@@ -201,6 +197,8 @@ int main()
 	gameOverMusic.setVolume(50);
 	
 ///////////////////////////////////////////////////////////////////////////////////////////
+	sf::Vector2f offset(120, 110);
+
 
 	while (window.isOpen())
 	{
@@ -225,6 +223,7 @@ int main()
 					if (pos.x >= 0 && pos.y >= 0 && pos.x<5 && pos.y<5)
 					{
 						puzzle[pos.y][pos.x]->setOrientation((puzzle[pos.y][pos.x]->getOrientation()) + 1);
+						
 						if (!strcmp((typeid(*(puzzle[pos.y][pos.x])).name()) , "class DirectPipe"))
 						{
 							puzzle[pos.y][pos.x]->startPipe[0] = 0;
@@ -365,32 +364,7 @@ int main()
 				for (int j = 0; j < length; j++)
 				{
 					puzzle[i][j]->draw(window, i, j, tileSize);
-
-					/*pipe& p = grid[j][i];
-
-					int kind = p.dirs.size();
-					if (kind == 2 && p.dirs[0] == -p.dirs[1]) kind = 0;
-
-					p.angle += 5;
-					if (p.angle > p.orientation * 90) p.angle = p.orientation * 90;
-
-					sPipe.setTextureRect(IntRect(ts * kind, 0, ts, ts));
-					sPipe.setRotation(p.angle);
-					sPipe.setPosition(j * ts, i * ts); sPipe.move(offset);
-					app.draw(sPipe);
-
-					if (kind == 1)
-					{
-						if (p.on) sComp.setTextureRect(IntRect(53, 0, 36, 36));
-						else sComp.setTextureRect(IntRect(0, 0, 36, 36));
-						sComp.setPosition(j * ts, i * ts); sComp.move(offset);
-						app.draw(sComp);
-					}*/
-
-
-
 				}
-
 			}
 
 			stringstream ss;
@@ -408,8 +382,312 @@ int main()
 	}
 	for(size_t i=0 ; i <length ; i++)
 		for(size_t j=0 ; j < length ; j++)
-			delete puzzle[i][j];
+			delete puzzle[i][j];           
 
 			
 	return 0;
+}
+
+
+void pathMaker()
+{
+	srand(static_cast<unsigned int>(time(0)));
+	int randomPath = (rand() % 2) + 1;
+	if ((!strcmp((typeid(*(puzzle[0][0])).name()), "class DirectPipe")) || (!strcmp((typeid(*(puzzle[0][0])).name()), "class HorizonalDirectPipe")))
+	{
+		if ((!strcmp((typeid(*(puzzle[4][4])).name()), "class LPipe")) || (!strcmp((typeid(*(puzzle[4][4])).name()), "class LPipe2")) ||
+			(!strcmp((typeid(*(puzzle[4][4])).name()), "class LPipe3")) || (!strcmp((typeid(*(puzzle[4][4])).name()), "class LPipe4")))
+		{
+			if (1 == randomPath)
+			{
+				delete puzzle[0][1]; puzzle[0][1] = new DirectPipe;
+				delete puzzle[0][2]; puzzle[0][2] = new LPipe;
+				delete puzzle[1][2]; puzzle[1][2] = new PlusPipe;
+				delete puzzle[2][2]; puzzle[2][2] = new LPipe2;
+				delete puzzle[2][3]; puzzle[2][3] = new LPipe4;
+				delete puzzle[1][3]; puzzle[1][3] = new LPipe3;
+				delete puzzle[1][1]; puzzle[1][1] = new LPipe4;
+				delete puzzle[2][1]; puzzle[2][1] = new DirectPipe;
+				delete puzzle[3][1]; puzzle[3][1] = new LPipe3;
+				delete puzzle[3][2]; puzzle[3][2] = new DirectPipe;
+				delete puzzle[3][3]; puzzle[3][3] = new HorizonalDirectPipe;
+				delete puzzle[3][4]; puzzle[3][4] = new LPipe3;
+			}
+			if (2 == randomPath)
+			{
+				delete puzzle[0][1]; puzzle[0][1] = new LPipe;
+				delete puzzle[1][1]; puzzle[1][1] = new LPipe3;
+				delete puzzle[1][2]; puzzle[1][2] = new LPipe4;
+				delete puzzle[2][2]; puzzle[2][2] = new LPipe2;
+				delete puzzle[2][3]; puzzle[2][3] = new LPipe4;
+				delete puzzle[3][3]; puzzle[3][3] = new LPipe3;
+				delete puzzle[3][4]; puzzle[3][4] = new LPipe;
+			}
+		}
+	}
+	if ((!strcmp((typeid(*(puzzle[0][0])).name()), "class DirectPipe")) || (!strcmp((typeid(*(puzzle[0][0])).name()), "class HorizonalDirectPipe")))
+	{
+		if ((!strcmp((typeid(*(puzzle[4][4])).name()), "class DirectPipe")) || (!strcmp((typeid(*(puzzle[4][4])).name()), "class HorizonalDirectPipe")))
+		{
+			if (1 == randomPath)
+			{
+				delete puzzle[0][1]; puzzle[0][1] = new LPipe;
+				delete puzzle[1][1]; puzzle[1][1] = new HorizonalDirectPipe;
+				delete puzzle[2][1]; puzzle[2][1] = new PlusPipe;
+				delete puzzle[3][1]; puzzle[3][1] = new LPipe2;
+				delete puzzle[3][0]; puzzle[3][0] = new LPipe3;
+				delete puzzle[4][0]; puzzle[4][0] = new LPipe;
+				delete puzzle[4][1]; puzzle[4][1] = new DirectPipe;
+				delete puzzle[4][2]; puzzle[4][2] = new DirectPipe;
+				delete puzzle[4][3]; puzzle[4][3] = new HorizonalDirectPipe;
+			}
+			if (2 == randomPath)
+			{
+				delete puzzle[0][1]; puzzle[0][1] = new DirectPipe;
+				delete puzzle[0][2]; puzzle[0][2] = new DirectPipe;
+				delete puzzle[0][3]; puzzle[0][3] = new LPipe4;
+				delete puzzle[1][3]; puzzle[1][3] = new LPipe2;
+				delete puzzle[1][4]; puzzle[1][4] = new LPipe;
+				delete puzzle[2][4]; puzzle[2][4] = new HorizonalDirectPipe;
+				delete puzzle[3][4]; puzzle[3][4] = new LPipe;
+				delete puzzle[3][3]; puzzle[3][3] = new LPipe4;
+				delete puzzle[4][3]; puzzle[4][3] = new LPipe;
+			}
+		}
+	}
+	if ((!strcmp((typeid(*(puzzle[0][0])).name()), "class DirectPipe")) || (!strcmp((typeid(*(puzzle[0][0])).name()), "class HorizonalDirectPipe")))
+	{
+		if ((!strcmp((typeid(*(puzzle[4][4])).name()), "class PlusPipe")))
+		{
+			if (1 == randomPath)
+			{
+				delete puzzle[0][1]; puzzle[0][1] = new LPipe;
+				delete puzzle[1][1]; puzzle[1][1] = new LPipe2;
+				delete puzzle[1][0]; puzzle[1][0] = new LPipe4;
+				delete puzzle[2][0]; puzzle[2][0] = new LPipe2;
+				delete puzzle[2][1]; puzzle[2][1] = new PlusPipe;
+				delete puzzle[2][2]; puzzle[2][2] = new LPipe;
+				delete puzzle[1][2]; puzzle[1][2] = new LPipe4;
+				delete puzzle[1][3]; puzzle[1][3] = new LPipe3;
+				delete puzzle[2][3]; puzzle[2][3] = new PlusPipe;
+				delete puzzle[3][3]; puzzle[3][3] = new DirectPipe;
+				delete puzzle[4][3]; puzzle[4][3] = new LPipe;
+			}
+			if (2 == randomPath)
+			{
+				delete puzzle[0][1]; puzzle[0][1] = new LPipe;
+				delete puzzle[1][1]; puzzle[1][1] = new PlusPipe;
+				delete puzzle[2][1]; puzzle[2][1] = new PlusPipe;
+				delete puzzle[3][1]; puzzle[3][1] = new LPipe;
+				delete puzzle[3][2]; puzzle[3][2] = new LPipe4;
+				delete puzzle[4][2]; puzzle[4][2] = new HorizonalDirectPipe;
+				delete puzzle[4][3]; puzzle[4][3] = new DirectPipe;
+			}
+		}
+	}
+	if ((!strcmp((typeid(*(puzzle[0][0])).name()), "class LPipe")) || (!strcmp((typeid(*(puzzle[0][0])).name()), "class LPipe2")) ||
+		(!strcmp((typeid(*(puzzle[0][0])).name()), "class LPipe3")) || (!strcmp((typeid(*(puzzle[0][0])).name()), "class LPipe4")))
+	{
+		if ((!strcmp((typeid(*(puzzle[4][4])).name()), "class PlusPipe")))
+		{
+			cout << "L      +" << endl;
+			if (1 == randomPath)
+			{
+				delete puzzle[1][0]; puzzle[1][0] = new HorizonalDirectPipe;
+				delete puzzle[2][0]; puzzle[2][0] = new LPipe;
+				delete puzzle[2][1]; puzzle[2][1] = new DirectPipe;
+				delete puzzle[2][2]; puzzle[2][2] = new DirectPipe;
+				delete puzzle[2][3]; puzzle[2][3] = new LPipe4;
+				delete puzzle[3][3]; puzzle[3][3] = new LPipe2;
+				delete puzzle[3][2]; puzzle[3][2] = new LPipe4;
+				delete puzzle[4][2]; puzzle[4][2] = new LPipe3;
+				delete puzzle[4][3]; puzzle[4][3] = new DirectPipe;
+			}
+			if (2 == randomPath)
+			{
+				delete puzzle[1][0]; puzzle[1][0] = new LPipe;
+				delete puzzle[1][1]; puzzle[1][1] = new LPipe4;
+				delete puzzle[2][0]; puzzle[2][0] = new LPipe3;
+				delete puzzle[2][1]; puzzle[2][1] = new LPipe;
+				delete puzzle[3][0]; puzzle[3][0] = new LPipe3;
+				delete puzzle[3][1]; puzzle[3][1] = new LPipe2;
+				delete puzzle[4][1]; puzzle[4][1] = new LPipe;
+				delete puzzle[4][2]; puzzle[4][2] = new LPipe2;
+				delete puzzle[3][2]; puzzle[3][2] = new LPipe2;
+				delete puzzle[3][3]; puzzle[3][3] = new LPipe4;
+				delete puzzle[4][3]; puzzle[4][3] = new LPipe2;
+			}
+		}
+	}
+	if ((!strcmp((typeid(*(puzzle[0][0])).name()), "class LPipe")) || (!strcmp((typeid(*(puzzle[0][0])).name()), "class LPipe2")) ||
+		(!strcmp((typeid(*(puzzle[0][0])).name()), "class LPipe3")) || (!strcmp((typeid(*(puzzle[0][0])).name()), "class LPipe4")))
+	{
+		if ((!strcmp((typeid(*(puzzle[4][4])).name()), "class DirectPipe")) || (!strcmp((typeid(*(puzzle[4][4])).name()), "class HorizonalDirectPipe")))
+		{
+			cout << "L      -" << endl;
+			if (1 == randomPath)
+			{
+				delete puzzle[1][0]; puzzle[1][0] = new LPipe;
+				delete puzzle[1][1]; puzzle[1][1] = new LPipe2;
+				delete puzzle[0][1]; puzzle[0][1] = new LPipe4;
+				delete puzzle[0][2]; puzzle[0][2] = new LPipe3;
+				delete puzzle[1][2]; puzzle[1][2] = new PlusPipe;
+				delete puzzle[2][2]; puzzle[2][2] = new LPipe2;
+				delete puzzle[2][3]; puzzle[2][3] = new LPipe4;
+				delete puzzle[3][3]; puzzle[3][3] = new DirectPipe;
+				delete puzzle[4][3]; puzzle[4][3] = new LPipe;
+			}
+			if (2 == randomPath)
+			{
+				delete puzzle[1][0]; puzzle[1][0] = new LPipe;
+				delete puzzle[1][1]; puzzle[1][1] = new LPipe4;
+				delete puzzle[2][0]; puzzle[2][0] = new LPipe3;
+				delete puzzle[2][1]; puzzle[2][1] = new LPipe;
+				delete puzzle[3][0]; puzzle[3][0] = new LPipe3;
+				delete puzzle[3][1]; puzzle[3][1] = new DirectPipe;
+				delete puzzle[3][2]; puzzle[3][2] = new PlusPipe;
+				delete puzzle[3][3]; puzzle[3][3] = new LPipe3;
+				delete puzzle[4][3]; puzzle[4][3] = new LPipe;
+			}
+		}
+	}
+	if ((!strcmp((typeid(*(puzzle[0][0])).name()), "class LPipe")) || (!strcmp((typeid(*(puzzle[0][0])).name()), "class LPipe2")) ||
+		(!strcmp((typeid(*(puzzle[0][0])).name()), "class LPipe3")) || (!strcmp((typeid(*(puzzle[0][0])).name()), "class LPipe4")))
+	{
+		if ((!strcmp((typeid(*(puzzle[4][4])).name()), "class LPipe")) || (!strcmp((typeid(*(puzzle[4][4])).name()), "class LPipe2")) ||
+			(!strcmp((typeid(*(puzzle[4][4])).name()), "class LPipe3")) || (!strcmp((typeid(*(puzzle[4][4])).name()), "class LPipe4")))
+		{
+			cout << "L      L" << endl;
+			if (1 == randomPath)
+			{
+				delete puzzle[1][0]; puzzle[1][0] = new LPipe;
+				delete puzzle[1][1]; puzzle[1][1] = new LPipe2;
+				delete puzzle[0][1]; puzzle[0][1] = new LPipe4;
+				delete puzzle[0][2]; puzzle[0][2] = new LPipe3;
+				delete puzzle[1][2]; puzzle[1][2] = new PlusPipe;
+				delete puzzle[2][2]; puzzle[2][2] = new LPipe2;
+				delete puzzle[2][3]; puzzle[2][3] = new PlusPipe;
+				delete puzzle[2][4]; puzzle[2][4] = new LPipe4;
+				delete puzzle[3][4]; puzzle[3][4] = new HorizonalDirectPipe;
+			}
+			if (2 == randomPath)
+			{
+				delete puzzle[1][0]; puzzle[1][0] = new LPipe;
+				delete puzzle[1][1]; puzzle[1][1] = new HorizonalDirectPipe;
+				delete puzzle[1][2]; puzzle[1][2] = new PlusPipe;
+				delete puzzle[1][3]; puzzle[1][3] = new LPipe2;
+				delete puzzle[0][3]; puzzle[0][3] = new LPipe4;
+				delete puzzle[0][4]; puzzle[0][4] = new LPipe3;
+				delete puzzle[1][4]; puzzle[1][4] = new HorizonalDirectPipe;
+				delete puzzle[2][4]; puzzle[2][4] = new DirectPipe;
+				delete puzzle[3][4]; puzzle[3][4] = new PlusPipe;
+			}
+			/////////////////////////////////////////////////////////////////////////////////
+		}
+	}
+	if ((!strcmp((typeid(*(puzzle[0][0])).name()), "class PlusPipe")))
+	{
+		if ((!strcmp((typeid(*(puzzle[4][4])).name()), "class PlusPipe")))
+		{
+			cout << "+      +" << endl;
+			if (1 == randomPath)
+			{
+				delete puzzle[0][1]; puzzle[0][1] = new DirectPipe;
+				delete puzzle[0][2]; puzzle[0][2] = new HorizonalDirectPipe;
+				delete puzzle[0][3]; puzzle[0][3] = new LPipe;
+				delete puzzle[1][3]; puzzle[1][3] = new PlusPipe;
+				delete puzzle[2][3]; puzzle[2][3] = new PlusPipe;
+				delete puzzle[3][3]; puzzle[3][3] = new HorizonalDirectPipe;
+				delete puzzle[4][3]; puzzle[4][3] = new LPipe3;
+			}
+			if (2 == randomPath)
+			{
+				delete puzzle[1][0]; puzzle[1][0] = new LPipe;
+				delete puzzle[1][1]; puzzle[1][1] = new LPipe3;
+				delete puzzle[2][1]; puzzle[2][1] = new LPipe2;
+				delete puzzle[2][2]; puzzle[2][2] = new LPipe4;
+				delete puzzle[1][2]; puzzle[1][2] = new PlusPipe;
+				delete puzzle[0][2]; puzzle[0][2] = new LPipe2;
+				delete puzzle[0][3]; puzzle[0][3] = new LPipe3;
+				delete puzzle[0][4]; puzzle[0][4] = new LPipe4;
+				delete puzzle[1][4]; puzzle[1][4] = new LPipe;
+				delete puzzle[1][3]; puzzle[1][3] = new LPipe3;
+				delete puzzle[2][3]; puzzle[2][3] = new PlusPipe;
+				delete puzzle[3][3]; puzzle[3][3] = new HorizonalDirectPipe;
+				delete puzzle[4][3]; puzzle[4][3] = new LPipe;
+				
+			}
+		}
+	}
+	if ((!strcmp((typeid(*(puzzle[0][0])).name()), "class PlusPipe")))
+	{
+		if ((!strcmp((typeid(*(puzzle[4][4])).name()), "class DirectPipe")) || (!strcmp((typeid(*(puzzle[4][4])).name()), "class HorizonalDirectPipe")))
+		{
+			cout << "+      -" << endl;
+			if (1== randomPath)
+			{
+				delete puzzle[0][1]; puzzle[0][1] = new DirectPipe;
+				delete puzzle[0][2]; puzzle[0][2] = new HorizonalDirectPipe;
+				delete puzzle[0][3]; puzzle[0][3] = new LPipe;
+				delete puzzle[1][3]; puzzle[1][3] = new PlusPipe;
+				delete puzzle[2][3]; puzzle[2][3] = new LPipe2;
+				delete puzzle[2][2]; puzzle[2][2] = new PlusPipe;
+				delete puzzle[2][1]; puzzle[2][1] = new LPipe;
+				delete puzzle[3][1]; puzzle[3][1] = new PlusPipe;
+				delete puzzle[4][1]; puzzle[4][1] = new LPipe3;
+				delete puzzle[4][2]; puzzle[4][2] = new HorizonalDirectPipe;
+				delete puzzle[4][3]; puzzle[4][3] = new DirectPipe;
+			}
+			if (2 == randomPath)
+			{
+				delete puzzle[1][0]; puzzle[1][0] = new LPipe;
+				delete puzzle[1][1]; puzzle[1][1] = new LPipe3;
+				delete puzzle[2][1]; puzzle[2][1] = new LPipe2;
+				delete puzzle[2][2]; puzzle[2][2] = new PlusPipe;
+				delete puzzle[2][3]; puzzle[2][3] = new LPipe;
+				delete puzzle[3][3]; puzzle[3][3] = new HorizonalDirectPipe;
+				delete puzzle[4][3]; puzzle[4][3] = new LPipe;
+			}
+		}
+	}
+	if ((!strcmp((typeid(*(puzzle[0][0])).name()), "class PlusPipe")))
+	{
+		if ((!strcmp((typeid(*(puzzle[4][4])).name()), "class LPipe")) || (!strcmp((typeid(*(puzzle[4][4])).name()), "class LPipe2")) ||
+			(!strcmp((typeid(*(puzzle[4][4])).name()), "class LPipe3")) || (!strcmp((typeid(*(puzzle[4][4])).name()), "class LPipe4")))
+		{
+			cout << "+      L" << endl;
+			if (1 == randomPath)
+			{
+				delete puzzle[0][1]; puzzle[0][1] = new LPipe;
+				delete puzzle[1][1]; puzzle[1][1] = new LPipe2;
+				delete puzzle[1][2]; puzzle[1][2] = new LPipe;
+				delete puzzle[2][2]; puzzle[2][2] = new LPipe4;
+				delete puzzle[2][1]; puzzle[2][1] = new LPipe2;
+				delete puzzle[3][1]; puzzle[3][1] = new PlusPipe;
+				delete puzzle[4][1]; puzzle[4][1] = new LPipe;
+				delete puzzle[4][2]; puzzle[4][2] = new DirectPipe;
+				delete puzzle[4][3]; puzzle[4][3] = new LPipe4;
+				delete puzzle[3][3]; puzzle[3][3] = new LPipe2;
+				delete puzzle[3][4]; puzzle[3][4] = new LPipe3;
+			}
+			if (2 == randomPath)
+			{
+				delete puzzle[0][1]; puzzle[0][1] = new DirectPipe;
+				delete puzzle[0][2]; puzzle[0][2] = new LPipe;
+				delete puzzle[1][2]; puzzle[1][2] = new PlusPipe;
+				delete puzzle[2][2]; puzzle[2][2] = new HorizonalDirectPipe;
+				delete puzzle[3][2]; puzzle[3][2] = new LPipe4;
+				delete puzzle[3][1]; puzzle[3][1] = new LPipe3;
+				delete puzzle[4][1]; puzzle[4][1] = new LPipe;
+				delete puzzle[4][2]; puzzle[4][2] = new DirectPipe;
+				delete puzzle[4][3]; puzzle[4][3] = new LPipe4;
+				delete puzzle[3][3]; puzzle[3][3] = new HorizonalDirectPipe;
+				delete puzzle[2][3]; puzzle[2][3] = new PlusPipe;
+				delete puzzle[1][3]; puzzle[1][3] = new LPipe2;
+				delete puzzle[1][4]; puzzle[1][4] = new LPipe4;
+				delete puzzle[2][4]; puzzle[2][4] = new DirectPipe;
+				delete puzzle[3][4]; puzzle[3][4] = new HorizonalDirectPipe;
+			}
+		}
+	}
 }
