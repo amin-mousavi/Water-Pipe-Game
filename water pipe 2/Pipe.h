@@ -18,30 +18,23 @@ public:
 	void setOrientation(int);
 	int getOrientation();
 
-	void setAngle(float);
-	float getAngle();
+	virtual void set_texture() = 0;
+	virtual sf::Texture get_texture() = 0;
 
-	void setOn(bool);
-	bool getOn();
-
-	void rotation();
-	bool isConnect(sf::Vector2i);
+	virtual void set_sprite() = 0;
+	virtual sf::Sprite get_sprite() = 0;
 
 	virtual void draw(sf::RenderWindow& pictureWindow, int, int, int) = 0;
 
-	//virtual void Draw(sf::RenderWindow& pictureWindow, Pipe*, int, int, int) = 0;
-	bool startPipe[4] = { 0,0,0,0 };
-	bool endPipe[4] = { 0,0,0,0 };
+	bool startPipe[4] = { 0,0,0,0 }; //Up - Down - Left - Right
+	bool endPipe[4] = { 0,0,0,0 };   //Up - Down - Left - Right
 
 protected:
+	
 	int orientation;
-	float angle;
-	bool on;
+	
 	sf::Texture pictureTexture;
 	sf::Sprite pictureSprite;
-	std::vector <sf::Vector2i> dirs;
-	
-
 };
 
 #endif

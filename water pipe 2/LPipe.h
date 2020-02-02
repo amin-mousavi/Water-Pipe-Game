@@ -10,8 +10,13 @@ public:
 	LPipe();
 	~LPipe();
 
-	void draw(sf::RenderWindow& pictureWindow, int row, int col, int title_size);
+	virtual void set_texture();
+	virtual sf::Texture get_texture();
 
+	virtual void set_sprite();
+	virtual sf::Sprite get_sprite();
+
+	void draw(sf::RenderWindow& pictureWindow, int row, int col, int title_size);
 };
 
 #endif

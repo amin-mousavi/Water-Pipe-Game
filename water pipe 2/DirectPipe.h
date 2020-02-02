@@ -10,9 +10,13 @@ public:
 	DirectPipe();
 	~DirectPipe();
 
-	void draw(sf::RenderWindow& pictureWindow, int row, int col, int title_size);
+	virtual void set_texture();
+	virtual sf::Texture get_texture();
 
-	//void Draw(sf::RenderWindow& pictureWindow, Pipe*, int, int, int);
+	virtual void set_sprite();
+	virtual sf::Sprite get_sprite();
+
+	void draw(sf::RenderWindow& pictureWindow, int row, int col, int title_size);
 };
 
 #endif
