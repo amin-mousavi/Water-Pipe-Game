@@ -1,12 +1,30 @@
 #include "LPipe.h"
 
-LPipe::LPipe()
+LPipe::LPipe():Pipe()
 {
 }
 
 
 LPipe::~LPipe()
 {
+}
+
+void LPipe::set_texture()
+{
+	this->pictureTexture.loadFromFile("image/3.png");
+}
+sf::Texture LPipe::get_texture()
+{
+	return this->pictureTexture;
+}
+
+void LPipe::set_sprite()
+{
+	this->pictureSprite.setTexture(get_texture());
+}
+sf::Sprite LPipe::get_sprite()
+{
+	return this->pictureSprite;
 }
 
 
@@ -19,8 +37,8 @@ void LPipe::draw(sf::RenderWindow& pictureWindow, int row, int col, int title_si
 	pictureSprite.setTexture(pictureTexture);
 	pictureSprite.setOrigin(27, 27);
 
-	//pictureSprite.setTextureRect(sf::IntRect(title_size * 2, 0, title_size, title_size));
-	pictureSprite.setRotation(orientation * 90);
+	pictureSprite.setRotation(getOrientation() * 90);
+	
 	pictureSprite.setPosition(col * title_size, row * title_size);
 	pictureSprite.move(offset);
 	//////////////////////////////////////////////////////////////////////////////////////

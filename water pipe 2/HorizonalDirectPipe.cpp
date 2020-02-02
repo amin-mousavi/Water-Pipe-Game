@@ -2,7 +2,7 @@
 
 
 
-HorizonalDirectPipe::HorizonalDirectPipe() :Pipe()
+HorizonalDirectPipe::HorizonalDirectPipe():Pipe()
 {
 }
 
@@ -11,18 +11,26 @@ HorizonalDirectPipe::~HorizonalDirectPipe()
 {
 }
 
+void HorizonalDirectPipe::set_texture()
+{
+	this->pictureTexture.loadFromFile("image/2-2.png");
+}
+sf::Texture HorizonalDirectPipe::get_texture()
+{
+	return this->pictureTexture;
+}
+
+void HorizonalDirectPipe::set_sprite()
+{
+	this->pictureSprite.setTexture(get_texture());
+}
+sf::Sprite HorizonalDirectPipe::get_sprite()
+{
+	return this->pictureSprite;
+}
+
 void HorizonalDirectPipe::draw(sf::RenderWindow& pictureWindow, int row, int col, int title_size)
 {
-	/*
-	int type = dirs.size();
-	if (type == 2 && dirs[0] == -dirs[1]) type = 0;
-
-	angle += 5;
-	if (angle > orientation * 90)
-	{
-		angle = orientation * 90;
-	}
-	*/
 
 	sf::Vector2f offset(120, 110);
 	pictureTexture.loadFromFile("image/2-2.png");
@@ -30,8 +38,8 @@ void HorizonalDirectPipe::draw(sf::RenderWindow& pictureWindow, int row, int col
 	pictureSprite.setTexture(pictureTexture);
 	pictureSprite.setOrigin(27, 27);
 
-	//pictureSprite.setTextureRect(sf::IntRect(title_size * 2 , 0, title_size , title_size));
-	pictureSprite.setRotation(orientation * 90);
+	pictureSprite.setRotation(getOrientation() * 90);
+	
 	pictureSprite.setPosition(col * title_size, row * title_size);
 	pictureSprite.move(offset);
 	//////////////////////////////////////////////////////////////////////////////////////

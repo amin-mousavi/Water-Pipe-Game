@@ -12,6 +12,25 @@ PlusPipe::~PlusPipe()
 {
 }
 
+
+void PlusPipe::set_texture()
+{
+	this->pictureTexture.loadFromFile("image/3-4.png");
+}
+sf::Texture PlusPipe::get_texture()
+{
+	return this->pictureTexture;
+}
+
+void PlusPipe::set_sprite()
+{
+	this->pictureSprite.setTexture(get_texture());
+}
+sf::Sprite PlusPipe::get_sprite()
+{
+	return this->pictureSprite;
+}
+
 void PlusPipe::draw(sf::RenderWindow& pictureWindow, int row, int col, int title_size)
 {
 	sf::Vector2f offset(120, 110);
@@ -21,12 +40,10 @@ void PlusPipe::draw(sf::RenderWindow& pictureWindow, int row, int col, int title
 	pictureSprite.setTexture(pictureTexture);
 	pictureSprite.setOrigin(27, 27);
 
-	//pictureSprite.setTextureRect(sf::IntRect(title_size * 2, 0, title_size, title_size));
-	pictureSprite.setRotation(orientation * 90);
+	pictureSprite.setRotation(getOrientation() * 90);
+
 	pictureSprite.setPosition(col * title_size, row * title_size);
 	pictureSprite.move(offset);
 	//////////////////////////////////////////////////////////////////////////////////////
 	pictureWindow.draw(pictureSprite);
-
-
 }
