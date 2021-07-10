@@ -8,7 +8,7 @@
 #include <typeinfo>
 #include <string>
 #include <fstream>
-
+#include <stack>
 
 #include "DirectPipe.h"
 #include "HorizonalDirectPipe.h"
@@ -27,7 +27,7 @@ int tileSize = 54;
 array <array<Pipe*, length>, length> puzzle;
 
 void pathMaker();
-bool pathCheck();
+// pathCheck();
 void generatePuzzle();
 bool Empty(ifstream& pFile);
 
@@ -79,8 +79,8 @@ int main()
 	messageText.setCharacterSize(50);
 	scoreText.setCharacterSize(30);
 
-	messageText.setFillColor(sf::Color::Black);
-	scoreText.setFillColor(sf::Color::Black);
+	messageText.setFillColor(sf::Color::Blue);
+	scoreText.setFillColor(sf::Color::Blue);
 
 	//Position the text
 	sf::FloatRect textRect = messageText.getLocalBounds();
@@ -100,7 +100,7 @@ int main()
 	timeBar.setFillColor(sf::Color::Blue);
 	timeBar.setPosition(0, 0);
 
-	sf::Time gameTimeTotal;
+//	sf::Time gameTimeTotal;
 	float timeRemaining = 6.0f;
 	float timeBarWidthPerSecond = timeBarStartWidth / timeRemaining;
 
@@ -130,7 +130,7 @@ int main()
 	ifstream readFile("SaveFile.bin", ios::in | ios::binary);
 	
 	///////////////////////////////////////////////////////////////////////////////////////////
-	sf::Vector2f Move(120, 110);
+	sf::Vector2f offset(120, 110);
 
 
 	while (window.isOpen())
@@ -209,7 +209,7 @@ int main()
 			{
 				if (event.key.code == sf::Mouse::Left)
 				{
-					sf::Vector2i pos = sf::Mouse::getPosition(window) + sf::Vector2i(tileSize / 2, tileSize / 2) - sf::Vector2i(Move);
+					sf::Vector2i pos = sf::Mouse::getPosition(window) + sf::Vector2i(tileSize / 2, tileSize / 2) - sf::Vector2i(offset);
 					pos.x /= tileSize;
 					pos.y /= tileSize;
 					//cout << "(x , y) " << pos.x << "  " << pos.y << endl;
@@ -298,8 +298,11 @@ int main()
 						}
 
 					}
-
-					///////////////function call///////////////////////////////
+					/*if (pathCheck())
+					{
+						cout << "winnnnnnnnnnnnnnnnnn" << endl;
+					}
+					*/
 				}
 			}
 			
@@ -451,8 +454,60 @@ bool Empty(ifstream& pFile)
 /*
 bool pathCheck()
 {
-	stack < int,int> path;
+	//pair <int, int> p;
+	int x = 0, y = 0, index1 = 0, index2 = 0;
+	//stack < pair <int,int> > path;
+	stack <int> a;
+	stack <int> b;
+	//path.push({ 0,0 });
+	a.push(0);
+	b.push(0);
+	while ((!a.empty()) && (!b.empty()))
+	{
+		//p = path.top;
+		x = a.top();
+		y = b.top();
+		//path.pop;
+		a.pop();
+		b.pop();
+
+		if (x == 4 && y == 4)
+		{
+			return true;
+		}
+		if((((puzzle[x][y]->startPipe[2] == 1) && (puzzle[x+1][y]->endPipe[3] == 1)) || ((puzzle[x][y]->startPipe[0] == 1) && (puzzle[x + 1][y]->endPipe[1] == 1)) || ((puzzle[x][y]->startPipe[1] == 1) && (puzzle[x + 1][y]->endPipe[0] == 1)) || ((puzzle[x][y]->startPipe[3] == 1) && (puzzle[x + 1][y]->endPipe[2] == 1)))&&  (x<5 && y<5 && x>-1 && y > -1))
+		{
+			a.push(x + 1);
+			b.push(y);
+		}
+		if ((((puzzle[x][y]->startPipe[2] == 1) && (puzzle[x][y+1]->endPipe[3] == 1)) || ((puzzle[x][y]->startPipe[0] == 1) && (puzzle[x][y+1]->endPipe[1] == 1)) || ((puzzle[x][y]->startPipe[1] == 1) && (puzzle[x][y+1]->endPipe[0] == 1)) || ((puzzle[x][y]->startPipe[3] == 1) && (puzzle[x][y+1]->endPipe[2] == 1))) && (x<5 && y<5 && x>-1 && y > -1))
+		{
+			a.push(x );
+			b.push(y+1);
+			//path.push({ x , y+1 });
+		}
+		if ((((puzzle[x][y]->startPipe[2] == 1) && (puzzle[x][y-1]->endPipe[3] == 1)) || ((puzzle[x][y]->startPipe[0] == 1) && (puzzle[x][y-1]->endPipe[1] == 1)) || ((puzzle[x][y]->startPipe[1] == 1) && (puzzle[x][y-1]->endPipe[0] == 1)) || ((puzzle[x][y]->startPipe[3] == 1) && (puzzle[x][y-1]->endPipe[2] == 1)))&&  (x<5 && y<5 && x>-1 && y > -1))
+		{
+			a.push(x);
+			b.push(y-1);
+			//path.push({ x  , y-1 });
+		}
+		if ((((puzzle[x][y]->startPipe[2] == 1) && (puzzle[x - 1][y]->endPipe[3] == 1)) || ((puzzle[x][y]->startPipe[0] == 1) && (puzzle[x - 1][y]->endPipe[1] == 1)) || ((puzzle[x][y]->startPipe[1] == 1) && (puzzle[x - 1][y]->endPipe[0] == 1)) || ((puzzle[x][y]->startPipe[3] == 1) && (puzzle[x - 1][y]->endPipe[2] == 1))) && (x<5 && y<5 && x>-1 && y > -1))
+		{
+			a.push(x -1);
+			b.push(y);
+			//path.push({ x - 1 , y });
+
+		}
+		else
+		{
+			
+			return false;
+			
+		}
+	}
 	
+
 }
 */
 void generatePuzzle()
